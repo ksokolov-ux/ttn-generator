@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вчасно.ТТН | Исправленный Генератор</title>
+    <title>еТТН | Повний Генератор</title>
     <style>
         :root { --primary: #1a73e8; --bg: #f8f9fa; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; font-size: 14px; }
@@ -11,8 +11,10 @@
         h2 { font-size: 16px; background: #e8f0fe; padding: 10px; border-radius: 4px; color: #1967d2; margin-top: 25px; border-left: 5px solid var(--primary); }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
         .field { display: flex; flex-direction: column; margin-bottom: 10px; }
-        label { font-weight: 600; margin-bottom: 4px; color: #5f6368; font-size: 12px; }
-        input { padding: 10px; border: 1px solid #dadce0; border-radius: 4px; }
+        label { font-weight: 600; margin-bottom: 4px; color: #5f6368; font-size: 11px; }
+        input { padding: 8px; border: 1px solid #dadce0; border-radius: 4px; }
+        .item-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 6px; background: #fdfdfd; position: relative; }
+        .btn-add { background: #34a853; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 10px 0; }
         .btn-generate { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         #json-output { background: #202124; color: #a8ffaa; padding: 20px; border-radius: 8px; margin-top: 20px; white-space: pre-wrap; font-family: monospace; display: none; overflow-x: auto; }
     </style>
@@ -20,24 +22,24 @@
 <body>
 
 <div class="container">
-    <h1 style="text-align:center; color:var(--primary)">📝 Генератор еТТН (Виправлення помилок)</h1>
+    <h1 style="text-align:center; color:var(--primary)">📦 Повний Генератор еТТН v3.0</h1>
 
     <form id="ttnForm">
-        <h2>1. Загальні відомості (Обов'язкові тексти)</h2>
+        <h2>1. Загальні відомості та Тексти (ExchangedDocument)</h2>
         <div class="grid">
             <div class="field"><label>ID Документа</label><input type="text" id="doc_id" value="1234567890"></div>
-            <div class="field"><label>Місто (Name)</label><input type="text" id="issue_city" value="Київ"></div>
-            <div class="field"><label>Адреса складання (Description) *</label><input type="text" id="issue_desc" placeholder="вул. Космонавтів 1"></div>
-            <div class="field"><label>Вага словами (напр. сто кг)</label><input type="text" id="weight_text" placeholder="сто кілограмів"></div>
-            <div class="field"><label>Сума словами</label><input type="text" id="amount_text" placeholder="одна тисяча грн"></div>
-            <div class="field"><label>К-сть місць словами</label><input type="text" id="qty_text" placeholder="одне місце"></div>
+            <div class="field"><label>Дата та час складання</label><input type="datetime-local" id="doc_date"></div>
+            <div class="field"><label>Адреса складання (Description) *</label><input type="text" id="issue_desc" placeholder="вул. Хрещатик 1"></div>
+            <div class="field"><label>Вага словами (GrossWeightMeasureText) *</label><input type="text" id="weight_text" placeholder="сто кг"></div>
+            <div class="field"><label>Сума словами (AssociatedInvoiceAmountText) *</label><input type="text" id="amount_text" placeholder="одна тисяча грн"></div>
+            <div class="field"><label>К-сть місць словами (ConsignmentItemQuantityText) *</label><input type="text" id="qty_text" placeholder="одне місце"></div>
             <div class="field"><label>ПДВ (число)</label><input type="number" id="vat_val" value="0"></div>
-            <div class="field"><label>ПДВ словами</label><input type="text" id="vat_text" placeholder="нуль грн"></div>
+            <div class="field"><label>ПДВ словами (VatAmountText)</label><input type="text" id="vat_text" placeholder="нуль грн"></div>
         </div>
 
-        <h2>2. Габарити авто (TransportEquipmentTruck)</h2>
+        <h2>2. Габарити авто (Truck Details)</h2>
         <div class="grid">
-            <div class="field"><label>Держномер</label><input type="text" id="tr_id" value="АА1111ББ"></div>
+            <div class="field"><label>Держномер тягача</label><input type="text" id="tr_id" value="АА1111ББ"></div>
             <div class="field"><label>Марка</label><input type="text" id="tr_brand" value="Mercedes"></div>
             <div class="field"><label>Модель *</label><input type="text" id="tr_model" value="Vito"></div>
             <div class="field"><label>Довжина (м) *</label><input type="number" step="0.01" id="tr_len" value="5.00"></div>
@@ -48,13 +50,26 @@
 
         <h2>3. Перевізник та Водій</h2>
         <div class="grid">
-            <div class="field"><label>Назва перевізника *</label><input type="text" id="ca_name" placeholder="ТОВ Перевізник"></div>
-            <div class="field"><label>ЄДРПОУ перевізника *</label><input type="text" id="ca_tax_id" placeholder="12345678"></div>
-            <div class="field"><label>Ліцензія (як рядок) *</label><input type="text" id="ca_gov" placeholder="АА 123456"></div>
-            <div class="field"><label>ПІБ Водія (PersonName)</label><input type="text" id="dr_person" value="Шевченко Т.Г."></div>
+            <div class="field"><label>Назва перевізника (Carrier Name) *</label><input type="text" id="ca_name"></div>
+            <div class="field"><label>ЄДРПОУ перевізника *</label><input type="text" id="ca_tax_id" pattern="\d{8}"></div>
+            <div class="field"><label>Ліцензія (Серія/Номер) *</label><input type="text" id="ca_gov"></div>
+            <div class="field"><label>ПІБ Водія (PersonName)</label><input type="text" id="dr_person"></div>
             <div class="field"><label>Водій (Посада/Name) *</label><input type="text" id="dr_name" value="Водій"></div>
-            <div class="field"><label>ІПН Водія</label><input type="text" id="dr_id" value="1234567890"></div>
+            <div class="field"><label>ІПН Водія (10 цифр)</label><input type="text" id="dr_id" pattern="\d{10}"></div>
         </div>
+
+        <h2>4. Перелік вантажу (SupplyChainItems)</h2>
+        <div id="items-container">
+            <div class="item-card">
+                <div class="grid">
+                    <div class="field"><label>Найменування товару *</label><input type="text" class="itm-name"></div>
+                    <div class="field"><label>Вага брутто (кг) *</label><input type="number" step="0.001" class="itm-weight"></div>
+                    <div class="field"><label>Кількість місць *</label><input type="number" class="itm-qty"></div>
+                    <div class="field"><label>Код упаковки (GL, шт тощо)</label><input type="text" class="itm-unit" value="GL"></div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn-add" onclick="addItem()">+ Додати ще один товар</button>
 
         <button type="button" class="btn-generate" onclick="generateJSON()">СФОРМУВАТИ JSON БЕЗ ПОМИЛОК</button>
     </form>
@@ -63,15 +78,43 @@
 </div>
 
 <script>
+    // Поточна дата
+    document.getElementById('doc_date').value = new Date().toISOString().slice(0, 16);
+
+    function addItem() {
+        const container = document.getElementById('items-container');
+        const newItem = container.querySelector('.item-card').cloneNode(true);
+        newItem.querySelectorAll('input').forEach(input => {
+            if (input.className !== 'itm-unit') input.value = '';
+        });
+        container.appendChild(newItem);
+    }
+
     function generateJSON() {
+        const items = [];
+        document.querySelectorAll('.item-card').forEach((card, index) => {
+            const name = card.querySelector('.itm-name').value;
+            if(name) {
+                items.push({
+                    "SequenceNumeric": index + 1,
+                    "NatureIdentificationTransportCargo": name,
+                    "GrossWeightMeasure": parseFloat(card.querySelector('.itm-weight').value || 0),
+                    "TransportLogisticsPackage": {
+                        "ItemQuantity": parseInt(card.querySelector('.itm-qty').value || 0),
+                        "TypeCode": card.querySelector('.itm-unit').value
+                    }
+                });
+            }
+        });
+
         const payload = {
             "ttn_type": "generic",
             "schema_version": 2,
             "ExchangedDocument": {
                 "ID": document.getElementById('doc_id').value,
-                "IssueDateTime": new Date().toISOString(),
+                "IssueDateTime": new Date(document.getElementById('doc_date').value).toISOString(),
                 "IssueLogisticsLocation": {
-                    "Name": document.getElementById('issue_city').value,
+                    "Name": "Пункт оформлення",
                     "Description": document.getElementById('issue_desc').value
                 },
                 "GrossWeightMeasureText": document.getElementById('weight_text').value,
@@ -105,18 +148,14 @@
                         "RoleCode": "DR"
                     }]
                 },
-                "SupplyChainItems": [{
-                    "SequenceNumeric": 1,
-                    "NatureIdentificationTransportCargo": "Тестовий вантаж",
-                    "GrossWeightMeasure": 100,
-                    "TransportLogisticsPackage": { "ItemQuantity": 1, "TypeCode": "GL" }
-                }]
+                "SupplyChainItems": items
             }
         };
 
         const out = document.getElementById('json-output');
         out.innerText = JSON.stringify(payload, null, 2);
         out.style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
     }
 </script>
 </body>
