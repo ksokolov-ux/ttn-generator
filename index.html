@@ -8,6 +8,34 @@
 
 <style>
 
+.tabs{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.tab-btn{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#dfe6f3;
+    cursor:pointer;
+    font-weight:700;
+}
+
+.tab-btn.active{
+    background:#1a73e8;
+    color:white;
+}
+
+.tab-content{
+    display:none;
+}
+
+.tab-content.active{
+    display:block;
+}
+    
 body{
     font-family:Segoe UI,sans-serif;
     background:#f5f7fb;
@@ -135,7 +163,24 @@ button{
 <div class="container">
 
 <h1>📦 eTTN Generator</h1>
+<div class="tabs">
 
+    <button
+        class="tab-btn active"
+        onclick="openTab('ttn-tab', this)">
+        📦 Генератор ТТН
+    </button>
+
+    <button
+        class="tab-btn"
+        onclick="openTab('act-tab', this)">
+        📄 Генератор Актів
+    </button>
+
+</div>
+
+<div id="ttn-tab" class="tab-content active">
+    
 <!-- DOCUMENT -->
 
 <div class="section">
@@ -409,6 +454,130 @@ button{
 
 </div>
 
+</div>
+
+<div id="act-tab" class="tab-content">
+
+<div class="section">
+<h2>📄 Генератор Актів</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>ID документа</label>
+<input id="act_doc_id">
+</div>
+
+<div class="field">
+<label>Дата документа</label>
+<input type="datetime-local" id="act_doc_date">
+</div>
+
+<div class="field">
+<label>Місце складання</label>
+<input id="act_place">
+</div>
+
+<div class="field">
+<label>Опис місця</label>
+<input id="act_place_desc">
+</div>
+
+<div class="field">
+<label>Коментар</label>
+<input id="act_remarks">
+</div>
+
+<div class="field">
+<label>Тип акту</label>
+<select id="act_type">
+<option value="reject">reject</option>
+</select>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<h2>📝 Reject Payload</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Примітка відправника</label>
+<input id="consignor_notes">
+</div>
+
+<div class="field">
+<label>Примітка перевізника</label>
+<input id="carrier_notes">
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<h2>👤 Підписант Відправника</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>ID</label>
+<input id="consignor_cert_id">
+</div>
+
+<div class="field">
+<label>Назва</label>
+<input id="consignor_cert_name">
+</div>
+
+<div class="field">
+<label>ПІБ</label>
+<input id="consignor_cert_person">
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<h2>🚚 Підписант Перевізника</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>ID</label>
+<input id="carrier_cert_id">
+</div>
+
+<div class="field">
+<label>Назва</label>
+<input id="carrier_cert_name">
+</div>
+
+<div class="field">
+<label>ПІБ</label>
+<input id="carrier_cert_person">
+</div>
+
+</div>
+</div>
+
+<div class="buttons">
+
+<button class="primary" onclick="generateActJSON()">
+СФОРМУВАТИ ACT JSON
+</button>
+
+<button class="green" onclick="copyActJSON()">
+КОПІЮВАТИ
+</button>
+
+</div>
+
+<pre id="act-json-output"></pre>
+
+</div>
+    
 <script>
 
 document.getElementById('doc_date').value =
@@ -744,7 +913,137 @@ function clearForm(){
         location.reload();
     }
 }
+javascript
+function openTab(tabId, btn){
 
+    document
+        .querySelectorAll('.tab-content')
+        .forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+    document
+        .querySelectorAll('.tab-btn')
+        .forEach(button => {
+            button.classList.remove('active');
+        });
+
+    document
+        .getElementById(tabId)
+        .classList.add('active');
+
+    btn.classList.add('active');
+}
+
+function generateActJSON(){
+
+    const payload = clean({
+
+        version: 0,
+
+        act: {
+
+            ExchangedDocument: {
+
+                ID:
+                    val('act_doc_id'),
+
+                IssueDateTime:
+                    val('act_doc_date')
+                        ? new Date(
+                            val('act_doc_date')
+                        ).toISOString()
+                        : undefined,
+
+                IssueLogisticsLocation: {
+
+                    Name:
+                        val('act_place'),
+
+                    Description:
+                        val('act_place_desc')
+                },
+
+                Remarks:
+                    val('act_remarks')
+            },
+
+            type:
+                val('act_type'),
+
+            RejectActPayload: {
+
+                ConsignorNotes:
+                    val('consignor_notes'),
+
+                CarrierNotes:
+                    val('carrier_notes')
+            },
+
+            CertifyingPartyPayload: {
+
+                ConsignorCertifyingParty: {
+
+                    RoleCode: 'CZ',
+
+                    ID:
+                        val('consignor_cert_id'),
+
+                    Name:
+                        val('consignor_cert_name'),
+
+                    PersonName:
+                        val('consignor_cert_person')
+                },
+
+                CarrierCertifyingParty: {
+
+                    RoleCode: 'CA',
+
+                    ID:
+                        val('carrier_cert_id'),
+
+                    Name:
+                        val('carrier_cert_name'),
+
+                    PersonName:
+                        val('carrier_cert_person')
+                }
+            }
+        }
+    });
+
+    document.getElementById(
+        'act-json-output'
+    ).textContent = JSON.stringify(
+        payload,
+        null,
+        2
+    );
+}
+
+function copyActJSON(){
+
+    navigator.clipboard.writeText(
+        document.getElementById(
+            'act-json-output'
+        ).textContent
+    );
+
+    alert('ACT JSON скопійовано');
+}
+
+setTimeout(()=>{
+
+    const actDate = document.getElementById('act_doc_date');
+
+    if(actDate){
+        actDate.value = new Date()
+            .toISOString()
+            .slice(0,16);
+    }
+
+},100);
 </script>
 
 </body>
