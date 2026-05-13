@@ -13,53 +13,37 @@
         .field-group { display: flex; flex-direction: column; }
         label { font-weight: 600; margin-bottom: 5px; font-size: 0.85em; color: #5f6368; }
         input { padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 1em; }
-        input:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 0 3px rgba(26,115,232,0.2); }
-        
-        /* Стиль секции товаров */
-        .item-card { background: #f8f9fa; border: 1px solid #e8eaed; padding: 20px; border-radius: 10px; margin-bottom: 15px; position: relative; }
+        .item-card { background: #f8f9fa; border: 1px solid #e8eaed; padding: 20px; border-radius: 10px; margin-bottom: 15px; }
         .item-card h3 { margin-top: 0; font-size: 0.9em; color: #1a73e8; text-transform: uppercase; }
-        
-        .btn-add { background: #34a853; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
-        .btn-add:hover { background: #2d8e47; }
-        
-        .btn-generate { background: #1a73e8; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
-        
-        #json-output { background: #202124; color: #34d399; padding: 20px; border-radius: 10px; margin-top: 20px; white-space: pre-wrap; font-family: 'Consolas', monospace; display: none; overflow-x: auto; }
+        .btn-add { background: #34a853; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin: 20px 0; }
+        .btn-generate { background: #1a73e8; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; }
+        #json-output { background: #202124; color: #34d399; padding: 20px; border-radius: 10px; margin-top: 20px; white-space: pre-wrap; font-family: monospace; display: none; }
         .copy-btn { background: #5f6368; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🚀 Генератор еТТН v2.0</h1>
+    <h1>🚀 Генератор еТТН v2.1</h1>
 
     <h2>📅 Документ</h2>
     <div class="grid">
-        <div class="field-group">
-            <label>Номер ТТН (ID):</label>
-            <input type="text" id="doc_id" placeholder="Наприклад: TTN-001">
-        </div>
-        <div class="field-group">
-            <label>Дата та час складання:</label>
-            <input type="datetime-local" id="doc_date">
-        </div>
-        <div class="field-group">
-            <label>Місто складання:</label>
-            <input type="text" id="issue_city" placeholder="Київ">
-        </div>
+        <div class="field-group"><label>Номер ТТН (ID):</label><input type="text" id="doc_id" placeholder="TTN-001"></div>
+        <div class="field-group"><label>Дата та час складання:</label><input type="datetime-local" id="doc_date"></div>
+        <div class="field-group"><label>Місто складання:</label><input type="text" id="issue_city" placeholder="Київ"></div>
     </div>
 
     <h2>🏢 Учасники (ЄДРПОУ)</h2>
     <div class="grid">
-        <div class="field-group"><label>Відправник:</label><input type="text" id="cz_id" placeholder="ЄДРПОУ"></div>
-        <div class="field-group"><label>Отримувач:</label><input type="text" id="cn_id" placeholder="ЄДРПОУ"></div>
-        <div class="field-group"><label>Перевізник:</label><input type="text" id="ca_id" placeholder="ЄДРПОУ"></div>
+        <div class="field-group"><label>Відправник:</label><input type="text" id="cz_id"></div>
+        <div class="field-group"><label>Отримувач:</label><input type="text" id="cn_id"></div>
+        <div class="field-group"><label>Перевізник:</label><input type="text" id="ca_id"></div>
     </div>
 
     <h2>🚚 Транспорт</h2>
     <div class="grid">
-        <div class="field-group"><label>Держномер авто:</label><input type="text" id="truck_id" placeholder="AA1111BB"></div>
-        <div class="field-group"><label>Водій (ПІБ):</label><input type="text" id="driver_name" placeholder="Прізвище І.О."></div>
+        <div class="field-group"><label>Держномер авто:</label><input type="text" id="truck_id"></div>
+        <div class="field-group"><label>Водій (ПІБ):</label><input type="text" id="driver_name"></div>
     </div>
 
     <h2>📦 Товари</h2>
@@ -74,51 +58,49 @@
         </div>
     </div>
     
-    <button class="btn-add" onclick="addItem()">+ Додати ще один товар</button>
-
-    <button class="btn-generate" onclick="generate()">Сформувати JSON для Postman</button>
+    <button type="button" class="btn-add" onclick="addItem()">+ Додати ще один товар</button>
+    <button type="button" class="btn-generate" onclick="generate()">Сформувати JSON</button>
 
     <pre id="json-output"></pre>
-    <button class="copy-btn" id="copy-btn" onclick="copyJson()">📋 Копіювати JSON</button>
+    <button type="button" class="copy-btn" id="copy-btn" onclick="copyJson()">📋 Копіювати JSON</button>
 </div>
 
 <script>
-    // Устанавливаем текущую дату при загрузке
-    window.onload = function() {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('doc_date').value = now.toISOString().slice(0, 16);
-    };
+    // 1. Установка даты
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('doc_date').value = now.toISOString().slice(0, 16);
 
     let itemCount = 1;
 
+    // 2. Функция добавления товара (Исправлена)
     function addItem() {
         itemCount++;
         const container = document.getElementById('items-container');
-        const html = `
-            <div class="item-card">
-                <h3>Товар #${itemCount}</h3>
-                <div class="grid">
-                    <div class="field-group"><label>Назва:</label><input type="text" class="item-name"></div>
-                    <div class="field-group"><label>Вага брутто (кг):</label><input type="number" class="item-weight"></div>
-                    <div class="field-group"><label>Кількість:</label><input type="number" class="item-qty"></div>
-                </div>
+        const newCard = document.createElement('div');
+        newCard.className = 'item-card';
+        newCard.innerHTML = `
+            <h3>Товар #${itemCount}</h3>
+            <div class="grid">
+                <div class="field-group"><label>Назва:</label><input type="text" class="item-name"></div>
+                <div class="field-group"><label>Вага брутто (кг):</label><input type="number" class="item-weight"></div>
+                <div class="field-group"><label>Кількість:</label><input type="number" class="item-qty"></div>
             </div>
         `;
-        container.insertAdjacentHTML('beforeend', html);
+        container.appendChild(newCard);
     }
 
+    // 3. Генерация JSON
     function generate() {
-        // Собираем товары
         const items = [];
-        const itemNodes = document.querySelectorAll('.item-card');
+        const itemCards = document.querySelectorAll('.item-card');
         
-        itemNodes.forEach((node, index) => {
-            const name = node.querySelector('.item-name').value;
-            const weight = node.querySelector('.item-weight').value;
-            const qty = node.querySelector('.item-qty').value;
+        itemCards.forEach((card, index) => {
+            const name = card.querySelector('.item-name').value;
+            const weight = card.querySelector('.item-weight').value;
+            const qty = card.querySelector('.item-qty').value;
 
-            if (name) {
+            if (name.trim() !== "") {
                 items.push({
                     "SequenceNumeric": index + 1,
                     "NatureIdentificationTransportCargo": name,
@@ -131,7 +113,6 @@
             }
         });
 
-        // Формируем дату в формате ISO для API (добавляем Z в конце)
         const localDate = document.getElementById('doc_date').value;
         const isoDate = localDate ? new Date(localDate).toISOString() : "";
 
@@ -139,9 +120,7 @@
             "ExchangedDocument": {
                 "ID": document.getElementById('doc_id').value,
                 "IssueDateTime": isoDate,
-                "IssueLogisticsLocation": {
-                    "Name": document.getElementById('issue_city').value
-                }
+                "IssueLogisticsLocation": { "Name": document.getElementById('issue_city').value }
             },
             "SpecifiedSupplyChainConsignment": {
                 "ConsignorTradeParty": { "ID": document.getElementById('cz_id').value },
@@ -163,4 +142,10 @@
     }
 
     function copyJson() {
-        navigator.clipboard.writeText
+        const text = document.getElementById('json-output').innerText;
+        navigator.clipboard.writeText(text).then(() => alert("JSON скопійовано!"));
+    }
+</script>
+
+</body>
+</html>
