@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>eTTN JSON Generator ULTRA</title>
+<title>eTTN JSON Generator</title>
 
 <style>
 
@@ -14,6 +14,10 @@
     --border:#dce3ea;
     --success:#188038;
     --danger:#d93025;
+}
+
+*{
+    box-sizing:border-box;
 }
 
 body{
@@ -145,7 +149,7 @@ button{
 
 <div class="container">
 
-<h1>📦 eTTN JSON Generator ULTRA</h1>
+<h1>📦 eTTN JSON Generator</h1>
 
 <!-- DOCUMENT -->
 
@@ -225,6 +229,11 @@ button{
 <div class="grid">
 
 <div class="field">
+<label>ID замовника</label>
+<input id="customer_id">
+</div>
+
+<div class="field">
 <label>Назва замовника</label>
 <input id="customer_name">
 </div>
@@ -240,13 +249,13 @@ button{
 <div class="grid">
 
 <div class="field">
-<label>Назва</label>
-<input id="consignor_name">
+<label>ЄДРПОУ</label>
+<input id="consignor_id">
 </div>
 
 <div class="field">
-<label>ЄДРПОУ</label>
-<input id="consignor_id">
+<label>Назва</label>
+<input id="consignor_name">
 </div>
 
 </div>
@@ -260,13 +269,13 @@ button{
 <div class="grid">
 
 <div class="field">
-<label>Назва</label>
-<input id="consignee_name">
+<label>ЄДРПОУ</label>
+<input id="consignee_id">
 </div>
 
 <div class="field">
-<label>ЄДРПОУ</label>
-<input id="consignee_id">
+<label>Назва</label>
+<input id="consignee_name">
 </div>
 
 </div>
@@ -280,13 +289,13 @@ button{
 <div class="grid">
 
 <div class="field">
-<label>Назва</label>
-<input id="carrier_name">
+<label>ЄДРПОУ</label>
+<input id="carrier_id">
 </div>
 
 <div class="field">
-<label>ЄДРПОУ</label>
-<input id="carrier_id">
+<label>Назва</label>
+<input id="carrier_name">
 </div>
 
 <div class="field">
@@ -305,7 +314,12 @@ button{
 <div class="grid">
 
 <div class="field">
-<label>Точка завантаження</label>
+<label>ID точки завантаження</label>
+<input id="load_id">
+</div>
+
+<div class="field">
+<label>Назва точки завантаження</label>
 <input id="load_name">
 </div>
 
@@ -315,7 +329,12 @@ button{
 </div>
 
 <div class="field">
-<label>Точка розвантаження</label>
+<label>ID точки розвантаження</label>
+<input id="unload_id">
+</div>
+
+<div class="field">
+<label>Назва точки розвантаження</label>
 <input id="unload_name">
 </div>
 
@@ -330,7 +349,7 @@ button{
 <!-- TRUCK -->
 
 <div class="section">
-<h2>7. Авто</h2>
+<h2>7. Автомобіль</h2>
 
 <div class="grid">
 
@@ -360,13 +379,13 @@ button{
 <div class="grid">
 
 <div class="field">
-<label>ПІБ</label>
-<input id="driver_person">
+<label>ІПН</label>
+<input id="driver_id">
 </div>
 
 <div class="field">
-<label>ІПН</label>
-<input id="driver_id">
+<label>ПІБ</label>
+<input id="driver_person">
 </div>
 
 <div class="field">
@@ -422,46 +441,57 @@ button{
 document.getElementById('doc_date').value =
 new Date().toISOString().slice(0,16);
 
-function uuid(){
-    return crypto.randomUUID();
-}
-
 function val(id){
     return document.getElementById(id).value.trim();
 }
 
-function addIf(obj,key,value){
+function clean(obj){
 
-    if(
-        value !== "" &&
-        value !== null &&
-        value !== undefined &&
-        !(typeof value === 'number' && isNaN(value))
-    ){
-        obj[key]=value;
+    if(Array.isArray(obj)){
+
+        const arr = obj
+            .map(clean)
+            .filter(v => v !== undefined);
+
+        return arr.length ? arr : undefined;
     }
-}
 
-function wrapValue(value){
+    if(obj !== null && typeof obj === 'object'){
+
+        const newObj = {};
+
+        Object.keys(obj).forEach(key => {
+
+            const cleaned = clean(obj[key]);
+
+            if(cleaned !== undefined){
+                newObj[key] = cleaned;
+            }
+        });
+
+        return Object.keys(newObj).length
+            ? newObj
+            : undefined;
+    }
 
     if(
-        value === "" ||
-        value === null ||
-        value === undefined
+        obj === undefined ||
+        obj === null ||
+        obj === ''
     ){
         return undefined;
     }
 
-    return { value:value };
+    return obj;
 }
 
 function addItem(){
 
-    const div=document.createElement('div');
+    const div = document.createElement('div');
 
-    div.className='item-card';
+    div.className = 'item-card';
 
-    div.innerHTML=`
+    div.innerHTML = `
 
     <button class="remove-btn" onclick="this.parentElement.remove()">X</button>
 
@@ -502,411 +532,279 @@ addItem();
 
 function generateJSON(){
 
-    const payload={
-
-        ttn_type:"generic",
-        schema_version:2
-    };
-
-    // ==========================
-    // ExchangedDocument
-    // ==========================
-
-    const exchanged={};
-
-    addIf(exchanged,"ID", val('doc_id') || uuid());
-
-    if(val('doc_date')){
-        addIf(
-            exchanged,
-            "IssueDateTime",
-            new Date(val('doc_date')).toISOString()
-        );
-    }
-
-    if(val('issue_desc')){
-
-        exchanged.IssueLogisticsLocation={};
-
-        addIf(
-            exchanged.IssueLogisticsLocation,
-            "Name",
-            "Пункт оформлення"
-        );
-
-        addIf(
-            exchanged.IssueLogisticsLocation,
-            "Description",
-            val('issue_desc')
-        );
-    }
-
-    addIf(
-        exchanged,
-        "GrossWeightMeasureText",
-        wrapValue(val('weight_text'))
-    );
-
-    addIf(
-        exchanged,
-        "AssociatedInvoiceAmountText",
-        wrapValue(val('amount_text'))
-    );
-
-    addIf(
-        exchanged,
-        "ConsignmentItemQuantityText",
-        wrapValue(val('qty_text'))
-    );
-
-    if(val('vat_amount')){
-        addIf(
-            exchanged,
-            "VatAmount",
-            wrapValue(parseFloat(val('vat_amount')))
-        );
-    }
-
-    addIf(
-        exchanged,
-        "VatAmountText",
-        wrapValue(val('vat_text'))
-    );
-
-    if(val('truck_length')){
-        addIf(
-            exchanged,
-            "VehicleLength",
-            wrapValue(parseFloat(val('truck_length')))
-        );
-    }
-
-    if(val('truck_width')){
-        addIf(
-            exchanged,
-            "VehicleWidth",
-            wrapValue(parseFloat(val('truck_width')))
-        );
-    }
-
-    if(val('truck_height')){
-        addIf(
-            exchanged,
-            "VehicleHeight",
-            wrapValue(parseFloat(val('truck_height')))
-        );
-    }
-
-    if(val('truck_weight')){
-        addIf(
-            exchanged,
-            "GrossVehicleWeightWithCargo",
-            wrapValue(parseFloat(val('truck_weight')))
-        );
-    }
-
-    payload.ExchangedDocument=exchanged;
-
-    // ==========================
-    // Consignment
-    // ==========================
-
-    const consignment={};
-
-    // Customer
-
-    if(val('customer_name')){
-
-        consignment.CustomerTradeParty={};
-
-        addIf(
-            consignment.CustomerTradeParty,
-            "Name",
-            val('customer_name')
-        );
-    }
-
-    // Consignor
-
-    if(
-        val('consignor_name') ||
-        val('consignor_id')
-    ){
-
-        consignment.ConsignorTradeParty={};
-
-        addIf(
-            consignment.ConsignorTradeParty,
-            "Name",
-            val('consignor_name')
-        );
-
-        addIf(
-            consignment.ConsignorTradeParty,
-            "ID",
-            val('consignor_id')
-        );
-
-        addIf(
-            consignment.ConsignorTradeParty,
-            "RoleCode",
-            "CZ"
-        );
-    }
-
-    // Consignee
-
-    if(
-        val('consignee_name') ||
-        val('consignee_id')
-    ){
-
-        consignment.ConsigneeTradeParty={};
-
-        addIf(
-            consignment.ConsigneeTradeParty,
-            "Name",
-            val('consignee_name')
-        );
-
-        addIf(
-            consignment.ConsigneeTradeParty,
-            "ID",
-            val('consignee_id')
-        );
-
-        addIf(
-            consignment.ConsigneeTradeParty,
-            "RoleCode",
-            "CN"
-        );
-    }
-
-    // Carrier
-
-    if(
-        val('carrier_name') ||
-        val('carrier_id')
-    ){
-
-        consignment.CarrierTradeParty={};
-
-        addIf(
-            consignment.CarrierTradeParty,
-            "Name",
-            val('carrier_name')
-        );
-
-        addIf(
-            consignment.CarrierTradeParty,
-            "ID",
-            val('carrier_id')
-        );
-
-        addIf(
-            consignment.CarrierTradeParty,
-            "SpecifiedTaxRegistration",
-            val('carrier_id')
-        );
-
-        addIf(
-            consignment.CarrierTradeParty,
-            "SpecifiedGovernmentRegistration",
-            val('carrier_license')
-        );
-
-        addIf(
-            consignment.CarrierTradeParty,
-            "RoleCode",
-            "CA"
-        );
-    }
-
-    // Load
-
-    if(
-        val('load_name') ||
-        val('load_desc')
-    ){
-
-        consignment.CarrierAcceptanceLogisticsLocation={};
-
-        addIf(
-            consignment.CarrierAcceptanceLogisticsLocation,
-            "Name",
-            val('load_name')
-        );
-
-        addIf(
-            consignment.CarrierAcceptanceLogisticsLocation,
-            "Description",
-            val('load_desc')
-        );
-    }
-
-    // Unload
-
-    if(
-        val('unload_name') ||
-        val('unload_desc')
-    ){
-
-        consignment.ConsigneeReceiptLogisticsLocation={};
-
-        addIf(
-            consignment.ConsigneeReceiptLogisticsLocation,
-            "Name",
-            val('unload_name')
-        );
-
-        addIf(
-            consignment.ConsigneeReceiptLogisticsLocation,
-            "Description",
-            val('unload_desc')
-        );
-    }
-
-    // Truck
-
-    if(
-        val('truck_id') ||
-        val('truck_brand') ||
-        val('truck_model')
-    ){
-
-        consignment.TransportEquipmentTruck={};
-
-        addIf(
-            consignment.TransportEquipmentTruck,
-            "ID",
-            val('truck_id')
-        );
-
-        addIf(
-            consignment.TransportEquipmentTruck,
-            "Brand",
-            val('truck_brand')
-        );
-
-        addIf(
-            consignment.TransportEquipmentTruck,
-            "Model",
-            val('truck_model')
-        );
-    }
-
-    // Driver
-
-    if(
-        val('driver_person') ||
-        val('driver_id')
-    ){
-
-        consignment.DeliveryTransportEvent={
-            DriverTradeParty:[{}]
-        };
-
-        const driver=
-            consignment.DeliveryTransportEvent
-            .DriverTradeParty[0];
-
-        addIf(driver,"ID",val('driver_id'));
-
-        addIf(driver,"Name",val('driver_name'));
-
-        addIf(driver,"PersonName",val('driver_person'));
-
-        addIf(driver,"RoleCode","DR");
-    }
-
-    // Items
-
-    const items=[];
+    const items = [];
 
     document.querySelectorAll('.item-card').forEach((card,index)=>{
 
-        const item={};
+        const item = clean({
 
-        const name=
-            card.querySelector('.itm-name').value.trim();
+            SequenceNumeric: index + 1,
 
-        if(!name){
-            return;
+            NatureIdentificationTransportCargo:
+                card.querySelector('.itm-name').value,
+
+            GrossWeightMeasure:
+                card.querySelector('.itm-weight').value
+                    ? parseFloat(
+                        card.querySelector('.itm-weight').value
+                    )
+                    : undefined,
+
+            DeclaredStatisticsValueAmount:
+                card.querySelector('.itm-price').value
+                    ? parseFloat(
+                        card.querySelector('.itm-price').value
+                    )
+                    : undefined,
+
+            TransportLogisticsPackage: {
+
+                ItemQuantity:
+                    card.querySelector('.itm-qty').value
+                        ? parseInt(
+                            card.querySelector('.itm-qty').value
+                        )
+                        : undefined,
+
+                TypeCode:
+                    card.querySelector('.itm-unit').value
+            }
+        });
+
+        if(item){
+            items.push(item);
         }
-
-        addIf(item,"SequenceNumeric",index+1);
-
-        addIf(
-            item,
-            "NatureIdentificationTransportCargo",
-            name
-        );
-
-        const weight=
-            card.querySelector('.itm-weight').value;
-
-        if(weight){
-            addIf(
-                item,
-                "GrossWeightMeasure",
-                parseFloat(weight)
-            );
-        }
-
-        const price=
-            card.querySelector('.itm-price').value;
-
-        if(price){
-            addIf(
-                item,
-                "DeclaredStatisticsValueAmount",
-                parseFloat(price)
-            );
-        }
-
-        const pkg={};
-
-        const qty=
-            card.querySelector('.itm-qty').value;
-
-        if(qty){
-            addIf(
-                pkg,
-                "ItemQuantity",
-                parseInt(qty)
-            );
-        }
-
-        const unit=
-            card.querySelector('.itm-unit').value.trim();
-
-        addIf(pkg,"TypeCode",unit);
-
-        if(Object.keys(pkg).length){
-            item.TransportLogisticsPackage=pkg;
-        }
-
-        items.push(item);
-
     });
 
-    if(items.length){
-        consignment.SupplyChainItems=items;
-    }
+    const payload = clean({
 
-    payload.SpecifiedSupplyChainConsignment=
-        consignment;
+        ttn_type: "generic",
 
-    const out=
-        document.getElementById('json-output');
+        schema_version: 2,
 
-    out.textContent=
+        ExchangedDocument: {
+
+            ID:
+                val('doc_id'),
+
+            IssueDateTime:
+                val('doc_date')
+                    ? new Date(
+                        val('doc_date')
+                    ).toISOString()
+                    : undefined,
+
+            IssueLogisticsLocation: {
+
+                Name:
+                    "Пункт оформлення",
+
+                Description:
+                    val('issue_desc')
+            },
+
+            GrossWeightMeasureText:
+                val('weight_text')
+                    ? {
+                        value:
+                            val('weight_text')
+                    }
+                    : undefined,
+
+            AssociatedInvoiceAmountText:
+                val('amount_text')
+                    ? {
+                        value:
+                            val('amount_text')
+                    }
+                    : undefined,
+
+            ConsignmentItemQuantityText:
+                val('qty_text')
+                    ? {
+                        value:
+                            val('qty_text')
+                    }
+                    : undefined,
+
+            VatAmount:
+                val('vat_amount')
+                    ? {
+                        value:
+                            parseFloat(
+                                val('vat_amount')
+                            )
+                    }
+                    : undefined,
+
+            VatAmountText:
+                val('vat_text')
+                    ? {
+                        value:
+                            val('vat_text')
+                    }
+                    : undefined,
+
+            VehicleLength:
+                val('truck_length')
+                    ? {
+                        value:
+                            parseFloat(
+                                val('truck_length')
+                            )
+                    }
+                    : undefined,
+
+            VehicleWidth:
+                val('truck_width')
+                    ? {
+                        value:
+                            parseFloat(
+                                val('truck_width')
+                            )
+                    }
+                    : undefined,
+
+            VehicleHeight:
+                val('truck_height')
+                    ? {
+                        value:
+                            parseFloat(
+                                val('truck_height')
+                            )
+                    }
+                    : undefined,
+
+            GrossVehicleWeightWithCargo:
+                val('truck_weight')
+                    ? {
+                        value:
+                            parseFloat(
+                                val('truck_weight')
+                            )
+                    }
+                    : undefined
+        },
+
+        SpecifiedSupplyChainConsignment: {
+
+            CustomerTradeParty: {
+
+                ID:
+                    val('customer_id'),
+
+                Name:
+                    val('customer_name')
+            },
+
+            ConsignorTradeParty: {
+
+                ID:
+                    val('consignor_id'),
+
+                Name:
+                    val('consignor_name'),
+
+                RoleCode:
+                    "CZ"
+            },
+
+            ConsigneeTradeParty: {
+
+                ID:
+                    val('consignee_id'),
+
+                Name:
+                    val('consignee_name'),
+
+                RoleCode:
+                    "CN"
+            },
+
+            CarrierTradeParty: {
+
+                ID:
+                    val('carrier_id'),
+
+                Name:
+                    val('carrier_name'),
+
+                SpecifiedTaxRegistration:
+                    val('carrier_id'),
+
+                SpecifiedGovernmentRegistration:
+                    val('carrier_license'),
+
+                RoleCode:
+                    "CA"
+            },
+
+            CarrierAcceptanceLogisticsLocation: {
+
+                ID:
+                    val('load_id'),
+
+                Name:
+                    val('load_name'),
+
+                Description:
+                    val('load_desc')
+            },
+
+            ConsigneeReceiptLogisticsLocation: {
+
+                ID:
+                    val('unload_id'),
+
+                Name:
+                    val('unload_name'),
+
+                Description:
+                    val('unload_desc')
+            },
+
+            TransportEquipmentTruck: {
+
+                ID:
+                    val('truck_id'),
+
+                Brand:
+                    val('truck_brand'),
+
+                Model:
+                    val('truck_model')
+            },
+
+            DeliveryTransportEvent: {
+
+                DriverTradeParty: [
+
+                    clean({
+
+                        ID:
+                            val('driver_id'),
+
+                        Name:
+                            val('driver_name'),
+
+                        PersonName:
+                            val('driver_person'),
+
+                        RoleCode:
+                            "DR"
+                    })
+                ]
+            },
+
+            SupplyChainItems:
+                items
+        }
+    });
+
+    document.getElementById(
+        'json-output'
+    ).textContent =
         JSON.stringify(payload,null,2);
-
-    localStorage.setItem(
-        'ettn_draft',
-        out.textContent
-    );
 }
 
 function copyJSON(){
@@ -920,7 +818,7 @@ function copyJSON(){
 
 function downloadJSON(){
 
-    const blob=new Blob(
+    const blob = new Blob(
         [
             document.getElementById('json-output').textContent
         ],
@@ -929,11 +827,11 @@ function downloadJSON(){
         }
     );
 
-    const a=document.createElement('a');
+    const a = document.createElement('a');
 
-    a.href=URL.createObjectURL(blob);
+    a.href = URL.createObjectURL(blob);
 
-    a.download='ettn.json';
+    a.download = 'ettn.json';
 
     a.click();
 }
@@ -941,9 +839,6 @@ function downloadJSON(){
 function clearForm(){
 
     if(confirm('Очистити форму?')){
-
-        localStorage.removeItem('ettn_draft');
-
         location.reload();
     }
 }
