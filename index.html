@@ -3,154 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Генератор еТТН (Повна структура)</title>
+    <title>Генератор еТТН Pro</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; padding: 20px; color: #202124; }
-        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #1a73e8; text-align: center; }
-        h2 { background: #f1f3f4; padding: 10px; border-radius: 6px; font-size: 1em; color: #3c4043; margin-top: 20px; border-left: 5px solid #1a73e8; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
-        .field-group { margin-bottom: 10px; }
-        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.85em; color: #5f6368; }
-        input { width: 100%; padding: 8px; border: 1px solid #dadce0; border-radius: 4px; box-sizing: border-box; }
-        input:focus { border-color: #1a73e8; outline: none; background: #fdfdfd; }
-        .btn-area { text-align: center; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
-        button { background-color: #1a73e8; color: white; padding: 12px 30px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }
-        #json-output { background: #202124; color: #a8ffaa; padding: 20px; border-radius: 8px; margin-top: 20px; white-space: pre-wrap; font-family: monospace; font-size: 0.85em; display: none; }
-        .copy-btn { background: #34a853; margin-left: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; padding: 20px; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; }
+        h2 { background: #1a73e8; color: white; padding: 8px 15px; border-radius: 6px; font-size: 1em; margin-top: 25px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .field-group { display: flex; flex-direction: column; }
+        label { font-weight: 600; margin-bottom: 5px; font-size: 0.85em; color: #5f6368; }
+        input { padding: 12px; border: 1px solid #dadce0; border-radius: 8px; font-size: 1em; }
+        input:focus { border-color: #1a73e8; outline: none; box-shadow: 0 0 0 3px rgba(26,115,232,0.2); }
+        
+        /* Стиль секции товаров */
+        .item-card { background: #f8f9fa; border: 1px solid #e8eaed; padding: 20px; border-radius: 10px; margin-bottom: 15px; position: relative; }
+        .item-card h3 { margin-top: 0; font-size: 0.9em; color: #1a73e8; text-transform: uppercase; }
+        
+        .btn-add { background: #34a853; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; }
+        .btn-add:hover { background: #2d8e47; }
+        
+        .btn-generate { background: #1a73e8; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+        
+        #json-output { background: #202124; color: #34d399; padding: 20px; border-radius: 10px; margin-top: 20px; white-space: pre-wrap; font-family: 'Consolas', monospace; display: none; overflow-x: auto; }
+        .copy-btn { background: #5f6368; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>📝 Повний Генератор еТТН</h1>
+    <h1>🚀 Генератор еТТН v2.0</h1>
+
+    <h2>📅 Документ</h2>
+    <div class="grid">
+        <div class="field-group">
+            <label>Номер ТТН (ID):</label>
+            <input type="text" id="doc_id" placeholder="Наприклад: TTN-001">
+        </div>
+        <div class="field-group">
+            <label>Дата та час складання:</label>
+            <input type="datetime-local" id="doc_date">
+        </div>
+        <div class="field-group">
+            <label>Місто складання:</label>
+            <input type="text" id="issue_city" placeholder="Київ">
+        </div>
+    </div>
+
+    <h2>🏢 Учасники (ЄДРПОУ)</h2>
+    <div class="grid">
+        <div class="field-group"><label>Відправник:</label><input type="text" id="cz_id" placeholder="ЄДРПОУ"></div>
+        <div class="field-group"><label>Отримувач:</label><input type="text" id="cn_id" placeholder="ЄДРПОУ"></div>
+        <div class="field-group"><label>Перевізник:</label><input type="text" id="ca_id" placeholder="ЄДРПОУ"></div>
+    </div>
+
+    <h2>🚚 Транспорт</h2>
+    <div class="grid">
+        <div class="field-group"><label>Держномер авто:</label><input type="text" id="truck_id" placeholder="AA1111BB"></div>
+        <div class="field-group"><label>Водій (ПІБ):</label><input type="text" id="driver_name" placeholder="Прізвище І.О."></div>
+    </div>
+
+    <h2>📦 Товари</h2>
+    <div id="items-container">
+        <div class="item-card">
+            <h3>Товар #1</h3>
+            <div class="grid">
+                <div class="field-group"><label>Назва:</label><input type="text" class="item-name"></div>
+                <div class="field-group"><label>Вага брутто (кг):</label><input type="number" class="item-weight"></div>
+                <div class="field-group"><label>Кількість:</label><input type="number" class="item-qty"></div>
+            </div>
+        </div>
+    </div>
     
-    <h2>1. Документ та Локація складання</h2>
-    <div class="grid">
-        <div class="field-group"><label>Номер ТТН (ID):</label><input type="text" id="doc_id" placeholder="Наприклад: 123"></div>
-        <div class="field-group"><label>Дата (ISO 8601):</label><input type="text" id="doc_date" placeholder="2026-05-13T12:00:00Z"></div>
-        <div class="field-group"><label>Місто складання:</label><input type="text" id="issue_city" placeholder="Київ"></div>
-    </div>
+    <button class="btn-add" onclick="addItem()">+ Додати ще один товар</button>
 
-    <h2>2. Сторони (Вантажовідправник та Отримувач)</h2>
-    <div class="grid">
-        <div class="field-group"><label>Відправник (Назва):</label><input type="text" id="cz_name" placeholder=""></div>
-        <div class="field-group"><label>Відправник (ЄДРПОУ):</label><input type="text" id="cz_id" placeholder=""></div>
-        <div class="field-group"><label>Відправник (ПІБ відп. особи):</label><input type="text" id="cz_person" placeholder=""></div>
-        
-        <div class="field-group"><label>Отримувач (Назва):</label><input type="text" id="cn_name" placeholder=""></div>
-        <div class="field-group"><label>Отримувач (ЄДРПОУ):</label><input type="text" id="cn_id" placeholder=""></div>
-        <div class="field-group"><label>Отримувач (ПІБ відп. особи):</label><input type="text" id="cn_person" placeholder=""></div>
-    </div>
-
-    <h2>3. Перевізник, Водій та Авто</h2>
-    <div class="grid">
-        <div class="field-group"><label>Перевізник (Назва):</label><input type="text" id="ca_name" placeholder=""></div>
-        <div class="field-group"><label>Перевізник (ЄДРПОУ):</label><input type="text" id="ca_id" placeholder=""></div>
-        <div class="field-group"><label>Ліцензія перевізника:</label><input type="text" id="ca_gov_reg" placeholder=""></div>
-        
-        <div class="field-group"><label>Водій (ПІБ):</label><input type="text" id="dr_name" placeholder=""></div>
-        <div class="field-group"><label>Водій (ІПН/ID):</label><input type="text" id="dr_id" placeholder=""></div>
-        <div class="field-group"><label>Держномер авто:</label><input type="text" id="truck_id" placeholder=""></div>
-        <div class="field-group"><label>Марка/Модель авто:</label><input type="text" id="truck_brand" placeholder=""></div>
-    </div>
-
-    <h2>4. Маршрут (Пункти навантаження / розвантаження)</h2>
-    <div class="grid">
-        <div class="field-group"><label>Пункт навантаження (Назва):</label><input type="text" id="load_name" placeholder=""></div>
-        <div class="field-group"><label>Пункт навантаження (Адреса):</label><input type="text" id="load_addr" placeholder=""></div>
-        
-        <div class="field-group"><label>Пункт розвантаження (Назва):</label><input type="text" id="unload_name" placeholder=""></div>
-        <div class="field-group"><label>Пункт розвантаження (Адреса):</label><input type="text" id="unload_addr" placeholder=""></div>
-    </div>
-
-    <h2>5. Вантаж (Товарна позиція)</h2>
-    <div class="grid">
-        <div class="field-group"><label>Назва товару:</label><input type="text" id="item_name" placeholder=""></div>
-        <div class="field-group"><label>Вага брутто (кг):</label><input type="number" id="item_weight" step="0.01" placeholder="0.00"></div>
-        <div class="field-group"><label>Кількість:</label><input type="number" id="item_qty" placeholder="0"></div>
-        <div class="field-group"><label>Одиниця виміру (напр. шт, кг):</label><input type="text" id="item_unit" placeholder="шт"></div>
-    </div>
-
-    <div class="btn-area">
-        <button onclick="generateFullJSON()">Згенерувати JSON</button>
-        <button class="copy-btn" id="copy-btn" style="display:none" onclick="copyText()">Копіювати JSON</button>
-    </div>
+    <button class="btn-generate" onclick="generate()">Сформувати JSON для Postman</button>
 
     <pre id="json-output"></pre>
+    <button class="copy-btn" id="copy-btn" onclick="copyJson()">📋 Копіювати JSON</button>
 </div>
 
 <script>
-    function generateFullJSON() {
-        const fullData = {
-            "ttn_type": "generic",
-            "schema_version": 1,
+    // Устанавливаем текущую дату при загрузке
+    window.onload = function() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('doc_date').value = now.toISOString().slice(0, 16);
+    };
+
+    let itemCount = 1;
+
+    function addItem() {
+        itemCount++;
+        const container = document.getElementById('items-container');
+        const html = `
+            <div class="item-card">
+                <h3>Товар #${itemCount}</h3>
+                <div class="grid">
+                    <div class="field-group"><label>Назва:</label><input type="text" class="item-name"></div>
+                    <div class="field-group"><label>Вага брутто (кг):</label><input type="number" class="item-weight"></div>
+                    <div class="field-group"><label>Кількість:</label><input type="number" class="item-qty"></div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    function generate() {
+        // Собираем товары
+        const items = [];
+        const itemNodes = document.querySelectorAll('.item-card');
+        
+        itemNodes.forEach((node, index) => {
+            const name = node.querySelector('.item-name').value;
+            const weight = node.querySelector('.item-weight').value;
+            const qty = node.querySelector('.item-qty').value;
+
+            if (name) {
+                items.push({
+                    "SequenceNumeric": index + 1,
+                    "NatureIdentificationTransportCargo": name,
+                    "GrossWeightMeasure": parseFloat(weight || 0),
+                    "TransportLogisticsPackage": {
+                        "ItemQuantity": parseInt(qty || 0),
+                        "TypeCode": "GL"
+                    }
+                });
+            }
+        });
+
+        // Формируем дату в формате ISO для API (добавляем Z в конце)
+        const localDate = document.getElementById('doc_date').value;
+        const isoDate = localDate ? new Date(localDate).toISOString() : "";
+
+        const result = {
             "ExchangedDocument": {
                 "ID": document.getElementById('doc_id').value,
-                "IssueDateTime": document.getElementById('doc_date').value,
+                "IssueDateTime": isoDate,
                 "IssueLogisticsLocation": {
                     "Name": document.getElementById('issue_city').value
                 }
             },
             "SpecifiedSupplyChainConsignment": {
-                "ConsignorTradeParty": {
-                    "ID": document.getElementById('cz_id').value,
-                    "Name": document.getElementById('cz_name').value,
-                    "DefinedTradeContact": { "PersonName": document.getElementById('cz_person').value }
-                },
-                "ConsigneeTradeParty": {
-                    "ID": document.getElementById('cn_id').value,
-                    "Name": document.getElementById('cn_name').value,
-                    "DefinedTradeContact": { "PersonName": document.getElementById('cn_person').value }
-                },
-                "CarrierTradeParty": {
-                    "ID": document.getElementById('ca_id').value,
-                    "Name": document.getElementById('ca_name').value,
-                    "SpecifiedGovernmentRegistration": document.getElementById('ca_gov_reg').value
-                },
-                "TransportEquipmentTruck": {
-                    "ID": document.getElementById('truck_id').value,
-                    "Brand": document.getElementById('truck_brand').value
-                },
-                "CarrierAcceptanceLogisticsLocation": {
-                    "Name": document.getElementById('load_name').value,
-                    "Description": document.getElementById('load_addr').value,
-                    "TypeCode": 10
-                },
-                "ConsigneeReceiptLogisticsLocation": {
-                    "Name": document.getElementById('unload_name').value,
-                    "Description": document.getElementById('unload_addr').value,
-                    "TypeCode": 5
-                },
+                "ConsignorTradeParty": { "ID": document.getElementById('cz_id').value },
+                "ConsigneeTradeParty": { "ID": document.getElementById('cn_id').value },
+                "CarrierTradeParty": { "ID": document.getElementById('ca_id').value },
+                "TransportEquipmentTruck": { "ID": document.getElementById('truck_id').value },
                 "DeliveryTransportEvent": {
-                    "DriverTradeParty": [{
-                        "ID": document.getElementById('dr_id').value,
-                        "PersonName": document.getElementById('dr_name').value
-                    }]
+                    "DriverTradeParty": [{ "PersonName": document.getElementById('driver_name').value }]
                 },
-                "SupplyChainItems": [{
-                    "SequenceNumeric": 1,
-                    "NatureIdentificationTransportCargo": document.getElementById('item_name').value,
-                    "GrossWeightMeasure": parseFloat(document.getElementById('item_weight').value || 0),
-                    "TransportLogisticsPackage": {
-                        "ItemQuantity": parseInt(document.getElementById('item_qty').value || 0),
-                        "Type": document.getElementById('item_unit').value
-                    }
-                }]
+                "SupplyChainItems": items
             }
         };
 
         const out = document.getElementById('json-output');
-        out.innerText = JSON.stringify(fullData, null, 2);
+        out.innerText = JSON.stringify(result, null, 2);
         out.style.display = 'block';
-        document.getElementById('copy-btn').style.display = 'inline-block';
+        document.getElementById('copy-btn').style.display = 'block';
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
-    function copyText() {
-        navigator.clipboard.writeText(document.getElementById('json-output').innerText);
-        alert("Скопійовано!");
-    }
-</script>
-
-</body>
-</html>
+    function copyJson() {
+        navigator.clipboard.writeText
