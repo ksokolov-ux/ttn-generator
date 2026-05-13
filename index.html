@@ -4,47 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>eTTN JSON Generator</title>
+<title>eTTN Generator</title>
 
 <style>
 
-:root{
-    --primary:#1a73e8;
-    --bg:#f4f7fb;
-    --border:#dce3ea;
-    --success:#188038;
-    --danger:#d93025;
-}
-
-*{
-    box-sizing:border-box;
-}
-
 body{
+    font-family:Segoe UI,sans-serif;
+    background:#f5f7fb;
     margin:0;
     padding:20px;
-    background:var(--bg);
-    font-family:Segoe UI,sans-serif;
 }
 
 .container{
-    max-width:1500px;
+    max-width:1400px;
     margin:auto;
     background:white;
-    border-radius:12px;
     padding:25px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    border-radius:12px;
+    box-shadow:0 4px 20px rgba(0,0,0,.08);
 }
 
 h1{
+    color:#1a73e8;
     text-align:center;
-    color:var(--primary);
-    margin-bottom:30px;
 }
 
 .section{
     margin-top:25px;
-    border:1px solid var(--border);
+    border:1px solid #dce3ea;
     border-radius:10px;
     padding:20px;
     background:#fafcff;
@@ -52,12 +39,12 @@ h1{
 
 .section h2{
     margin-top:0;
-    color:var(--primary);
+    color:#1a73e8;
 }
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
     gap:15px;
 }
 
@@ -68,23 +55,21 @@ h1{
 
 label{
     font-size:12px;
-    font-weight:600;
     margin-bottom:5px;
-    color:#5f6368;
+    font-weight:600;
 }
 
-input, textarea{
+input{
     padding:10px;
-    border:1px solid var(--border);
+    border:1px solid #dce3ea;
     border-radius:6px;
-    font-size:14px;
 }
 
 .item-card{
-    border:1px solid var(--border);
+    border:1px solid #dce3ea;
     border-radius:8px;
     padding:15px;
-    margin-bottom:15px;
+    margin-top:15px;
     background:white;
     position:relative;
 }
@@ -93,41 +78,41 @@ input, textarea{
     position:absolute;
     right:10px;
     top:10px;
-    background:var(--danger);
-    color:white;
     border:none;
-    border-radius:5px;
+    background:#d93025;
+    color:white;
     padding:5px 10px;
+    border-radius:5px;
     cursor:pointer;
 }
 
 .buttons{
     display:flex;
-    flex-wrap:wrap;
     gap:10px;
     margin-top:25px;
+    flex-wrap:wrap;
 }
 
 button{
     border:none;
     border-radius:6px;
     padding:12px 18px;
-    font-weight:700;
     cursor:pointer;
+    font-weight:700;
 }
 
-.btn-primary{
-    background:var(--primary);
+.primary{
+    background:#1a73e8;
     color:white;
 }
 
-.btn-success{
-    background:var(--success);
+.green{
+    background:#188038;
     color:white;
 }
 
-.btn-danger{
-    background:var(--danger);
+.red{
+    background:#d93025;
     color:white;
 }
 
@@ -135,12 +120,12 @@ button{
     margin-top:30px;
     background:#111827;
     color:#9effa1;
-    border-radius:10px;
     padding:20px;
+    border-radius:10px;
     white-space:pre-wrap;
     overflow:auto;
+    font-family:Consolas,monospace;
     max-height:800px;
-    font-family:Consolas, monospace;
 }
 
 </style>
@@ -149,7 +134,7 @@ button{
 
 <div class="container">
 
-<h1>📦 eTTN JSON Generator</h1>
+<h1>📦 eTTN Generator</h1>
 
 <!-- DOCUMENT -->
 
@@ -169,53 +154,73 @@ button{
 </div>
 
 <div class="field">
+<label>Місто оформлення</label>
+<input id="issue_name">
+</div>
+
+<div class="field">
 <label>Адреса оформлення</label>
 <input id="issue_desc">
 </div>
 
+</div>
+</div>
+
+<!-- CARRIER -->
+
+<div class="section">
+<h2>2. Перевізник</h2>
+
+<div class="grid">
+
 <div class="field">
-<label>Вага словами</label>
-<input id="weight_text">
+<label>Назва</label>
+<input id="carrier_name">
 </div>
 
 <div class="field">
-<label>Сума словами</label>
-<input id="amount_text">
+<label>ЄДРПОУ</label>
+<input id="carrier_id">
 </div>
 
 <div class="field">
-<label>Кількість місць словами</label>
-<input id="qty_text">
+<label>ІПН</label>
+<input id="carrier_tax">
 </div>
 
 <div class="field">
-<label>ПДВ</label>
-<input type="number" id="vat_amount">
+<label>Ліцензія</label>
+<input id="carrier_license">
 </div>
 
 <div class="field">
-<label>ПДВ словами</label>
-<input id="vat_text">
+<label>ПІБ водія</label>
+<input id="carrier_person">
+</div>
+
+</div>
+</div>
+
+<!-- TRUCK -->
+
+<div class="section">
+<h2>3. Автомобіль</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>Марка</label>
+<input id="truck_brand">
 </div>
 
 <div class="field">
-<label>Довжина авто</label>
-<input type="number" step="0.01" id="truck_length">
+<label>Модель</label>
+<input id="truck_model">
 </div>
 
 <div class="field">
-<label>Ширина авто</label>
-<input type="number" step="0.01" id="truck_width">
-</div>
-
-<div class="field">
-<label>Висота авто</label>
-<input type="number" step="0.01" id="truck_height">
-</div>
-
-<div class="field">
-<label>Маса авто</label>
-<input type="number" step="0.01" id="truck_weight">
+<label>Номер авто</label>
+<input id="truck_id">
 </div>
 
 </div>
@@ -224,17 +229,17 @@ button{
 <!-- CUSTOMER -->
 
 <div class="section">
-<h2>2. Замовник</h2>
+<h2>4. Замовник</h2>
 
 <div class="grid">
 
 <div class="field">
-<label>ID замовника</label>
+<label>ЄДРПОУ</label>
 <input id="customer_id">
 </div>
 
 <div class="field">
-<label>Назва замовника</label>
+<label>Назва</label>
 <input id="customer_name">
 </div>
 
@@ -244,7 +249,7 @@ button{
 <!-- CONSIGNOR -->
 
 <div class="section">
-<h2>3. Вантажовідправник</h2>
+<h2>5. Вантажовідправник</h2>
 
 <div class="grid">
 
@@ -264,7 +269,7 @@ button{
 <!-- CONSIGNEE -->
 
 <div class="section">
-<h2>4. Вантажоотримувач</h2>
+<h2>6. Вантажоотримувач</h2>
 
 <div class="grid">
 
@@ -281,116 +286,86 @@ button{
 </div>
 </div>
 
-<!-- CARRIER -->
+<!-- LOAD -->
 
 <div class="section">
-<h2>5. Перевізник</h2>
+<h2>7. Завантаження</h2>
 
 <div class="grid">
 
 <div class="field">
-<label>ЄДРПОУ</label>
-<input id="carrier_id">
-</div>
-
-<div class="field">
-<label>Назва</label>
-<input id="carrier_name">
-</div>
-
-<div class="field">
-<label>Ліцензія</label>
-<input id="carrier_license">
-</div>
-
-</div>
-</div>
-
-<!-- LOCATIONS -->
-
-<div class="section">
-<h2>6. Локації</h2>
-
-<div class="grid">
-
-<div class="field">
-<label>ID точки завантаження</label>
+<label>ID точки</label>
 <input id="load_id">
 </div>
 
 <div class="field">
-<label>Назва точки завантаження</label>
+<label>Місто</label>
 <input id="load_name">
 </div>
 
 <div class="field">
-<label>Адреса завантаження</label>
+<label>Адреса</label>
 <input id="load_desc">
 </div>
 
 <div class="field">
-<label>ID точки розвантаження</label>
+<label>TypeCode</label>
+<input type="number" id="load_type">
+</div>
+
+</div>
+</div>
+
+<!-- UNLOAD -->
+
+<div class="section">
+<h2>8. Розвантаження</h2>
+
+<div class="grid">
+
+<div class="field">
+<label>ID точки</label>
 <input id="unload_id">
 </div>
 
 <div class="field">
-<label>Назва точки розвантаження</label>
+<label>Місто</label>
 <input id="unload_name">
 </div>
 
 <div class="field">
-<label>Адреса розвантаження</label>
+<label>Адреса</label>
 <input id="unload_desc">
 </div>
 
+<div class="field">
+<label>TypeCode</label>
+<input type="number" id="unload_type">
+</div>
+
 </div>
 </div>
 
-<!-- TRUCK -->
+<!-- COMMON -->
 
 <div class="section">
-<h2>7. Автомобіль</h2>
+<h2>9. Загальні дані</h2>
 
 <div class="grid">
 
 <div class="field">
-<label>Номер авто</label>
-<input id="truck_id">
+<label>Загальна вага</label>
+<input type="number" id="gross_weight">
 </div>
 
 <div class="field">
-<label>Марка</label>
-<input id="truck_brand">
+<label>Загальна сума</label>
+<input type="number" id="invoice_amount">
 </div>
 
 <div class="field">
-<label>Модель</label>
-<input id="truck_model">
-</div>
-
-</div>
-</div>
-
-<!-- DRIVER -->
-
-<div class="section">
-<h2>8. Водій</h2>
-
-<div class="grid">
-
-<div class="field">
-<label>ІПН</label>
-<input id="driver_id">
-</div>
-
-<div class="field">
-<label>ПІБ</label>
-<input id="driver_person">
-</div>
-
-<div class="field">
-<label>Посада</label>
-<input id="driver_name" value="Водій">
+<label>Кількість місць</label>
+<input type="number" id="items_qty">
 </div>
 
 </div>
@@ -400,33 +375,31 @@ button{
 
 <div class="section">
 
-<h2>9. Товари</h2>
+<h2>10. Товари</h2>
 
 <div id="items-container"></div>
 
-<button class="btn-success" onclick="addItem()">
+<button class="green" onclick="addItem()">
 + Додати товар
 </button>
 
 </div>
 
-<!-- BUTTONS -->
-
 <div class="buttons">
 
-<button class="btn-primary" onclick="generateJSON()">
+<button class="primary" onclick="generateJSON()">
 СФОРМУВАТИ JSON
 </button>
 
-<button class="btn-success" onclick="copyJSON()">
+<button class="green" onclick="copyJSON()">
 КОПІЮВАТИ
 </button>
 
-<button class="btn-success" onclick="downloadJSON()">
+<button class="green" onclick="downloadJSON()">
 СКАЧАТИ
 </button>
 
-<button class="btn-danger" onclick="clearForm()">
+<button class="red" onclick="clearForm()">
 ОЧИСТИТИ
 </button>
 
@@ -503,29 +476,31 @@ function addItem(){
         </div>
 
         <div class="field">
+            <label>Вага</label>
+            <input type="number" class="itm-weight">
+        </div>
+
+        <div class="field">
             <label>Кількість</label>
             <input type="number" class="itm-qty">
         </div>
 
         <div class="field">
-            <label>Вага</label>
-            <input type="number" step="0.001" class="itm-weight">
+            <label>Тип</label>
+            <input class="itm-type">
         </div>
 
         <div class="field">
-            <label>Тип упаковки</label>
-            <input class="itm-unit" value="GL">
-        </div>
-
-        <div class="field">
-            <label>Сума</label>
-            <input type="number" class="itm-price">
+            <label>TypeCode</label>
+            <input class="itm-code">
         </div>
 
     </div>
     `;
 
-    document.getElementById('items-container').appendChild(div);
+    document.getElementById(
+        'items-container'
+    ).appendChild(div);
 }
 
 addItem();
@@ -534,11 +509,13 @@ function generateJSON(){
 
     const items = [];
 
-    document.querySelectorAll('.item-card').forEach((card,index)=>{
+    document.querySelectorAll('.item-card')
+    .forEach((card,index)=>{
 
         const item = clean({
 
-            SequenceNumeric: index + 1,
+            SequenceNumeric:
+                index + 1,
 
             NatureIdentificationTransportCargo:
                 card.querySelector('.itm-name').value,
@@ -550,14 +527,10 @@ function generateJSON(){
                     )
                     : undefined,
 
-            DeclaredStatisticsValueAmount:
-                card.querySelector('.itm-price').value
-                    ? parseFloat(
-                        card.querySelector('.itm-price').value
-                    )
-                    : undefined,
-
             TransportLogisticsPackage: {
+
+                Type:
+                    card.querySelector('.itm-type').value,
 
                 ItemQuantity:
                     card.querySelector('.itm-qty').value
@@ -567,7 +540,7 @@ function generateJSON(){
                         : undefined,
 
                 TypeCode:
-                    card.querySelector('.itm-unit').value
+                    card.querySelector('.itm-code').value
             }
         });
 
@@ -577,10 +550,6 @@ function generateJSON(){
     });
 
     const payload = clean({
-
-        ttn_type: "generic",
-
-        schema_version: 2,
 
         ExchangedDocument: {
 
@@ -597,96 +566,47 @@ function generateJSON(){
             IssueLogisticsLocation: {
 
                 Name:
-                    "Пункт оформлення",
+                    val('issue_name'),
 
                 Description:
                     val('issue_desc')
-            },
-
-            GrossWeightMeasureText:
-                val('weight_text')
-                    ? {
-                        value:
-                            val('weight_text')
-                    }
-                    : undefined,
-
-            AssociatedInvoiceAmountText:
-                val('amount_text')
-                    ? {
-                        value:
-                            val('amount_text')
-                    }
-                    : undefined,
-
-            ConsignmentItemQuantityText:
-                val('qty_text')
-                    ? {
-                        value:
-                            val('qty_text')
-                    }
-                    : undefined,
-
-            VatAmount:
-                val('vat_amount')
-                    ? {
-                        value:
-                            parseFloat(
-                                val('vat_amount')
-                            )
-                    }
-                    : undefined,
-
-            VatAmountText:
-                val('vat_text')
-                    ? {
-                        value:
-                            val('vat_text')
-                    }
-                    : undefined,
-
-            VehicleLength:
-                val('truck_length')
-                    ? {
-                        value:
-                            parseFloat(
-                                val('truck_length')
-                            )
-                    }
-                    : undefined,
-
-            VehicleWidth:
-                val('truck_width')
-                    ? {
-                        value:
-                            parseFloat(
-                                val('truck_width')
-                            )
-                    }
-                    : undefined,
-
-            VehicleHeight:
-                val('truck_height')
-                    ? {
-                        value:
-                            parseFloat(
-                                val('truck_height')
-                            )
-                    }
-                    : undefined,
-
-            GrossVehicleWeightWithCargo:
-                val('truck_weight')
-                    ? {
-                        value:
-                            parseFloat(
-                                val('truck_weight')
-                            )
-                    }
-                    : undefined
+            }
         },
 
         SpecifiedSupplyChainConsignment: {
+
+            CarrierTradeParty: {
+
+                DefinedTradeContact: {
+
+                    PersonName:
+                        val('carrier_person')
+                },
+
+                SpecifiedTaxRegistration:
+                    val('carrier_tax'),
+
+                SpecifiedGovernmentRegistration:
+                    val('carrier_license'),
+
+                ID:
+                    val('carrier_id'),
+
+                Name:
+                    val('carrier_name')
+            },
+
+            TransportEquipmentTruck: {
+
+                Brand:
+                    val('truck_brand'),
+
+                Model:
+                    val('truck_model'),
+
+                ID:
+                    val('truck_id')
+            },
 
             CustomerTradeParty: {
 
@@ -703,10 +623,7 @@ function generateJSON(){
                     val('consignor_id'),
 
                 Name:
-                    val('consignor_name'),
-
-                RoleCode:
-                    "CZ"
+                    val('consignor_name')
             },
 
             ConsigneeTradeParty: {
@@ -715,86 +632,67 @@ function generateJSON(){
                     val('consignee_id'),
 
                 Name:
-                    val('consignee_name'),
-
-                RoleCode:
-                    "CN"
-            },
-
-            CarrierTradeParty: {
-
-                ID:
-                    val('carrier_id'),
-
-                Name:
-                    val('carrier_name'),
-
-                SpecifiedTaxRegistration:
-                    val('carrier_id'),
-
-                SpecifiedGovernmentRegistration:
-                    val('carrier_license'),
-
-                RoleCode:
-                    "CA"
+                    val('consignee_name')
             },
 
             CarrierAcceptanceLogisticsLocation: {
-
-                ID:
-                    val('load_id'),
 
                 Name:
                     val('load_name'),
 
                 Description:
-                    val('load_desc')
+                    val('load_desc'),
+
+                ID:
+                    val('load_id'),
+
+                TypeCode:
+                    val('load_type')
+                        ? parseInt(
+                            val('load_type')
+                        )
+                        : undefined
             },
 
             ConsigneeReceiptLogisticsLocation: {
-
-                ID:
-                    val('unload_id'),
 
                 Name:
                     val('unload_name'),
 
                 Description:
-                    val('unload_desc')
-            },
-
-            TransportEquipmentTruck: {
+                    val('unload_desc'),
 
                 ID:
-                    val('truck_id'),
+                    val('unload_id'),
 
-                Brand:
-                    val('truck_brand'),
-
-                Model:
-                    val('truck_model')
+                TypeCode:
+                    val('unload_type')
+                        ? parseInt(
+                            val('unload_type')
+                        )
+                        : undefined
             },
 
-            DeliveryTransportEvent: {
+            GrossWeightMeasure:
+                val('gross_weight')
+                    ? parseFloat(
+                        val('gross_weight')
+                    )
+                    : undefined,
 
-                DriverTradeParty: [
+            AssociatedInvoiceAmount:
+                val('invoice_amount')
+                    ? parseFloat(
+                        val('invoice_amount')
+                    )
+                    : undefined,
 
-                    clean({
-
-                        ID:
-                            val('driver_id'),
-
-                        Name:
-                            val('driver_name'),
-
-                        PersonName:
-                            val('driver_person'),
-
-                        RoleCode:
-                            "DR"
-                    })
-                ]
-            },
+            ConsignmentItemQuantity:
+                val('items_qty')
+                    ? parseInt(
+                        val('items_qty')
+                    )
+                    : undefined,
 
             SupplyChainItems:
                 items
@@ -810,7 +708,9 @@ function generateJSON(){
 function copyJSON(){
 
     navigator.clipboard.writeText(
-        document.getElementById('json-output').textContent
+        document.getElementById(
+            'json-output'
+        ).textContent
     );
 
     alert('JSON скопійовано');
@@ -820,7 +720,9 @@ function downloadJSON(){
 
     const blob = new Blob(
         [
-            document.getElementById('json-output').textContent
+            document.getElementById(
+                'json-output'
+            ).textContent
         ],
         {
             type:'application/json'
