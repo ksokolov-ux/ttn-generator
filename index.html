@@ -266,6 +266,27 @@ button{
 <div class="field">
 <label>Номер авто</label>
 <input id="truck_id">
+
+<div class="field">
+<label>ПІБ водія</label>
+<input id="driver_name">
+</div>
+
+<div class="field">
+<label>ІПН водія</label>
+<input id="driver_id">
+</div>
+
+<div class="field">
+<label>Посвідчення водія</label>
+<input id="driver_license">
+</div>
+
+<div class="field">
+<label>Телефон водія</label>
+<input id="driver_phone">
+</div>
+    
 </div>
 
 </div>
@@ -456,6 +477,41 @@ button{
 <div class="field">
 <label>Вага авто з вантажем</label>
 <input type="number" step="0.01" id="gross_vehicle_weight">
+<div class="field">
+<label>Номер пломби</label>
+<input id="seal_number">
+</div>
+
+<div class="field">
+<label>Особливі примітки</label>
+<input id="special_notes">
+</div>
+
+<div class="field">
+<label>Температура мін.</label>
+<input id="truck_temp_min">
+</div>
+
+<div class="field">
+<label>Температура макс.</label>
+<input id="truck_temp_max">
+</div>
+
+<div class="field">
+<label>Колір авто</label>
+<input id="truck_color">
+</div>
+
+<div class="field">
+<label>Тип авто</label>
+<input id="truck_type">
+</div>
+
+<div class="field">
+<label>Країна реєстрації</label>
+<input id="truck_country">
+</div>
+    
 </div>
 
 </div>
@@ -763,6 +819,10 @@ function generateJSON(){
 
     const payload = clean({
 
+    ttn_type: "generic",
+
+    schema_version: 2,
+
         ExchangedDocument: {
 
     ID:
@@ -918,15 +978,48 @@ function generateJSON(){
 
             TransportEquipmentTruck: {
 
-                Brand:
-                    val('truck_brand'),
+    Brand:
+        val('truck_brand'),
 
-                Model:
-                    val('truck_model'),
+    Model:
+        val('truck_model'),
 
-                ID:
-                    val('truck_id')
-            },
+    ID:
+        val('truck_id'),
+
+    Color:
+        val('truck_color'),
+
+    Type:
+        val('truck_type'),
+
+    RegistrationCountry:
+        val('truck_country'),
+
+    MinimumTemperature:
+        val('truck_temp_min'),
+
+    MaximumTemperature:
+        val('truck_temp_max'),
+
+    Driver: {
+
+        ID:
+            val('driver_id'),
+
+        Name:
+            val('driver_name'),
+
+        LicenseID:
+            val('driver_license'),
+
+        TelephoneUniversalCommunication: {
+
+            CompleteNumber:
+                val('driver_phone')
+        }
+    }
+},
 
             CustomerTradeParty: {
 
@@ -957,22 +1050,28 @@ function generateJSON(){
 
             CarrierAcceptanceLogisticsLocation: {
 
-                Name:
-                    val('load_name'),
+    Name:
+        val('load_name'),
 
-                Description:
-                    val('load_desc'),
+    Description:
+        val('load_desc'),
 
-                ID:
-                    val('load_id'),
+    ID:
+        val('load_id'),
 
-                TypeCode:
-                    val('load_type')
-                        ? parseInt(
-                            val('load_type')
-                        )
-                        : undefined
-            },
+    Address: {
+
+        LineOneText:
+            val('load_desc')
+    },
+
+    TypeCode:
+        val('load_type')
+            ? parseInt(
+                val('load_type')
+            )
+            : undefined
+},
 
             ConsigneeReceiptLogisticsLocation: {
 
@@ -984,6 +1083,13 @@ function generateJSON(){
 
                 ID:
                     val('unload_id'),
+
+Address: {
+
+    LineOneText:
+        val('unload_desc')
+},
+                
 
                 TypeCode:
                     val('unload_type')
@@ -1015,7 +1121,16 @@ function generateJSON(){
                     : undefined,
 
             SupplyChainItems:
-                items
+    items,
+
+AdditionalInformation: {
+
+    SealNumberText:
+        val('seal_number'),
+
+    SpecialNotes:
+        val('special_notes')
+}
         }
     });
 
@@ -1108,12 +1223,18 @@ function generateActJSON(){
 
                 IssueLogisticsLocation: {
 
-                    Name:
-                        val('act_place'),
+    Name:
+        val('issue_name'),
 
-                    Description:
-                        val('act_place_desc')
-                },
+    Description:
+        val('issue_desc'),
+
+    Address: {
+
+        LineOneText:
+            val('issue_desc')
+    }
+},
 
                 Remarks:
                     val('act_remarks')
